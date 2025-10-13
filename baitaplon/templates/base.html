@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <title>MultiShop - Online Shop Website Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="Free HTML Templates">
+    <meta name="description" content="Free HTML Templates">
+
+    <!-- ✅ Block chứa CSS  -->
+    {% block cssblock %}
+
+    {% endblock cssblock %}
+</head>
+
+<body>
+
+    <!-- Navbar -->
+{% include 'navbar.html' %}
+
+    <!-- Nội dung -->
+{% block content %}
+{% endblock content %}
+
+    <!-- Footer -->
+{% include 'footer.html' %}
+
+    <!-- Các file JS -->
+{% block jsblock %}
+     
+{% endblock jsblock %}
+
+</body>
+</html>
