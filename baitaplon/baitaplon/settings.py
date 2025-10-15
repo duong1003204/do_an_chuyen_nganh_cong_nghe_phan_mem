@@ -18,6 +18,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -99,3 +100,39 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom user model
 AUTH_USER_MODEL = 'nguoidung.NguoiDung'
+
+
+# ==============================
+# GIAO DIỆN ADMIN JAZZMIN
+# ==============================
+JAZZMIN_SETTINGS = {
+    "site_title": "Trang Quản Lý Bán Hàng",
+    "site_header": "Hệ Thống Quản Lý Cửa Hàng",
+    "site_brand": "Baitaplon Admin",
+    "welcome_sign": "Chào mừng bạn đến với trang quản lý!",
+    "copyright": "© 2025 Nhóm Phát Triển Baitaplon",
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": [],
+    "hide_models": [],
+    "order_with_respect_to": ["nguoidung", "sanpham", "donhang", "giohang"],
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "nguoidung": "fas fa-user",
+        "sanpham": "fas fa-boxes",
+        "donhang": "fas fa-file-invoice-dollar",
+        "giohang": "fas fa-shopping-cart",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "flatly",        # flatly, darkly, cyborg, pulse, etc.
+    "navbar": "navbar-dark",
+    "sidebar": "sidebar-dark-primary",
+    "brand_colour": "navbar-primary",
+    "accent": "accent-primary",
+    "navbar_fixed": True,
+    "sidebar_fixed": True,
+}
