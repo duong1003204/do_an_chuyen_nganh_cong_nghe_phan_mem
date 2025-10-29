@@ -19,17 +19,8 @@
     <!-- Customized Bootstrap Stylesheet -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
 {% endblock %}
-
-
-
-
-
 {% block content %}
-
-
-
-
-    <!-- Carousel Start  ỔN CẦN ĐỔI MẤY NỘI DUNG SANG TIẾNG VIỆT-->
+    <!-- Carousel Start  ỔN, CẦN ĐỔI MẤY NỘI DUNG SANG TIẾNG VIỆT-->
     <div class="container-fluid mb-3">
         <div class="row px-xl-5">
             <div class="col-lg-8">
@@ -129,10 +120,10 @@
         <div class="row px-xl-5 pb-3">
             {% for dm_slsp in  danhmuc_slsp%}
             <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
-                <a class="text-decoration-none" href="">
+                <a class="text-decoration-none" href="{% url 'shop_danhmuc' dm_slsp.id %}">
                     <div class="cat-item img-zoom d-flex align-items-center mb-4">
                         <div class="overflow-hidden" style="width: 100px; height: 100px;">
-                            <img class="img-fluid" src="img/cat-3.jpg" alt="">
+                            <img class="img-fluid" src="" alt="">
                         </div>
                         <div class="flex-fill pl-3">
                             <h6>{{ dm_slsp.ten_danh_muc }}</h6>
@@ -165,7 +156,7 @@
                     <div class="text-center py-4">
                         <a class="h6 text-decoration-none text-truncate" href="">{{ sp.ten_san_pham }}</a>
                         <div class="d-flex align-items-center justify-content-center mt-2">
-                            <h5>${{ sp.gia_ban }}</h5><h6 class="text-muted ml-2"><del>${{ sp.gia }}</del></h6>
+                            <h5>${{ sp.giakm }}</h5><h6 class="text-muted ml-2"><del>${{ sp.gia }}</del></h6>
                         </div>
                         <div class="d-flex align-items-center justify-content-center mb-1">
 
@@ -224,7 +215,7 @@
                     <div class="text-center py-4">
                         <a class="h6 text-decoration-none text-truncate" href="">{{ sp.ten_san_pham }}</a>
                         <div class="d-flex align-items-center justify-content-center mt-2">
-                            <h5>${{ sp.gia }}</h5><h6 class="text-muted ml-2"><del>${{ sp.gia }}</del></h6>
+                            <h5>${{ sp.giakm }}</h5><h6 class="text-muted ml-2"><del>${{ sp.gia }}</del></h6>
                         </div>
                         
                     </div>

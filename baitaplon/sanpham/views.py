@@ -33,3 +33,10 @@ def shop(request):
     menudanhmuc = DanhMuc.objects.filter(trang_thai=True)
     sanpham = SanPham.objects.all()
     return render(request, 'shop.html', {'menudanhmuc': menudanhmuc, 'sanpham': sanpham})
+
+def shop_danhmuc(request, id):
+    menudanhmuc = DanhMuc.objects.filter(trang_thai=True)
+    danhmuc = DanhMuc.objects.get(id=id)
+    sanpham = SanPham.objects.filter(ma_danh_muc_id=id)
+
+    return render(request, 'shop.html', {'menudanhmuc': menudanhmuc, 'danhmuc': danhmuc, 'sanpham': sanpham})

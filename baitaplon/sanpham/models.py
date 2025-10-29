@@ -14,6 +14,7 @@ class SanPham(models.Model):
     ten_san_pham = models.CharField(max_length=200)
     mo_ta = models.TextField(blank=True, null=True)
     gia = models.DecimalField(max_digits=10, decimal_places=2)
+    giakm = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     anh_dai_dien = models.ImageField(upload_to='sanpham/', blank=True, null=True)
     trang_thai = models.BooleanField(default=True)
     
