@@ -2,6 +2,8 @@ from django.shortcuts import render
 from sanpham.models import DanhMuc, SanPham
 from django.db.models import Count, Q
 
+from django.contrib.auth.decorators import login_required
+@login_required
 def index(request):
     menudanhmuc = DanhMuc.objects.filter(trang_thai=True)
     danhmuc_slsp = DanhMuc.objects.filter(trang_thai=True).annotate(soluongsp=Count('sanpham'))

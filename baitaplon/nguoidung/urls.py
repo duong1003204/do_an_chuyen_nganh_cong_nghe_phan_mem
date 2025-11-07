@@ -1,9 +1,9 @@
+# urls.py (trong app, ví dụ: accounts/urls.py)
 
-from django.urls import include, path
+from django.urls import path
+from . import views
 
-from nguoidung import views
-from .views import login
 
 urlpatterns = [
-   path('login/', login, name='login'),
+    path('dang-nhap/', views.customer_login, name='dang-nhap'),
 ]
