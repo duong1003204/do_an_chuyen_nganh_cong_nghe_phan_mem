@@ -11,3 +11,7 @@ def login(request):
     
     
     return render(request, 'login.html')
+
+def dangki(request):
+
+    return render(request, 'registr.html')
