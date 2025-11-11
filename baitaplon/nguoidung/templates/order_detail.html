@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block cssblock %}
+<link href="{% static 'img/favicon.ico' %}" rel="icon">
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+<link href="{% static 'lib/animate/animate.min.css' %}" rel="stylesheet">
+<link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <style>
+        
+        /* Tùy chỉnh nhỏ cho tab */
+        .profile-nav .nav-link {
+            font-weight: 500;
+        }
+        .profile-nav .nav-link.active {
+            color: #FFD333; /* Màu vàng của template */
+            border-bottom: 2px solid #FFD333;
+        }
+        
+        /* CSS cho thông báo lỗi của form */
+        .form-error-list {
+            list-style-type: none;
+            padding: 0;
+            color: #dc3545; /* Màu đỏ (danger) */
+            font-size: 0.875em;
+        }
+    </style>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <nav class="breadcrumb bg-light mb-30">
+                    <a class="breadcrumb-item text-dark" href="{% url 'index' %}">Home</a>
+                    <a class="breadcrumb-item text-dark" href="{% url 'profile' %}">Trang Cá Nhân</a>
+                    <span class="breadcrumb-item active">Chi Tiết Đơn Hàng #{{ order.id }}</span>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12 mb-4">
+                <a href="{% url 'profile' %}" class="btn btn-secondary"><i class="fa fa-arrow-left mr-2"></i> Quay lại lịch sử</a>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bg-light p-30 mb-4">
+                    <h5 class="text-uppercase mb-3"><span class="bg-secondary pr-3">Thông tin đơn hàng</span></h5>
+                    <p><strong>Mã đơn hàng:</strong> #{{ order.id }}</p>
+                    <p><strong>Ngày đặt:</strong> {{ order.ngay_dat|date:"d/m/Y H:i" }}</p>
+                    <p><strong>Trạng thái:</strong> 
+                        {% if order.trang_thai_don_hang == 'da_huy' %}
+                            <span class="text-danger">{{ order.get_trang_thai_don_hang_display }}</span>
+                        {% elif order.trang_thai_don_hang == 'da_giao' %}
+                            <span class="text-success">{{ order.get_trang_thai_don_hang_display }}</span>
+                        {% else %}
+                            <span class="text-warning">{{ order.get_trang_thai_don_hang_display }}</span>
+                        {% endif %}
+                    </p>
+                    <p><strong>Tổng tiền:</strong> <span class="h5 text-danger">{{ order.tong_tien|floatformat:0 }} VNĐ</span></p>
+                </div>
+                <div class="bg-light p-30 mb-4">
+                    <h5 class="text-uppercase mb-3"><span class="bg-secondary pr-3">Địa chỉ giao hàng</span></h5>
+                    <p><strong>Người nhận:</strong> {{ order.ma_nguoi_dung.ho_ten }}</p>
+                    <p><strong>Địa chỉ:</strong> {{ order.dia_chi_giao }}</p>
+                    <p><strong>PT Thanh toán:</strong> {{ order.phuong_thuc_thanh_toan }}</p>
+                    {% if order.ghi_chu %}
+                    <p><strong>Ghi chú:</strong> {{ order.ghi_chu }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="bg-light p-30">
+                    <h5 class="text-uppercase mb-3"><span class="bg-secondary pr-3">Các sản phẩm trong đơn</span></h5>
+                    <div class="table-responsive">
+                        <table class="table table-light table-borderless table-hover text-center mb-0">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Ảnh</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody class="align-middle">
+                                {% for item in order_items %}
+                                <tr>
+                                    <td class="align-middle text-left">{{ item.ma_san_pham.ten_san_pham }}</td>
+                                    <td class="align-middle"><img src="{{ item.ma_san_pham.anh_dai_dien.url }}" alt="" style="width: 50px;"></td>
+                                    <td class="align-middle">{{ item.so_luong }}</td>
+                                    <td class="align-middle">{{ item.gia|floatformat:0 }} VNĐ</td>
+                                    <td class="align-middle">{{ item.thanh_tien|floatformat:0 }} VNĐ</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block jsblock %}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'lib/easing/easing.min.js' %}"></script>
+<script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+<script src="{% static 'mail/jqBootstrapValidation.min.js' %}"></script>
+<script src="{% static 'mail/contact.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+    {% endblock %}

@@ -1,4 +1,3 @@
-    <!-- Topbar Start -->
 {% load static %}
     <div class="container-fluid">
         <div class="row bg-secondary py-1 px-xl-5">
@@ -7,25 +6,40 @@
 
                 </div>
             </div>
-            <div class="col-lg-6 text-center text-lg-right">
-                <div class="d-inline-flex align-items-center">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">My Account</button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="{% url 'dang-nhap' %}">Sign in</a>
-                            <a class="dropdown-item" href="#">Sign up</a>
-                        </div>
-                    </div>
+
+        {% load static %}
+<div class="col-lg-6 text-center text-lg-right">
+    <div class="d-inline-flex align-items-center">
+
+        {% if user.is_authenticated %}
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">
+                    Chào, {{ user.username }}
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a href="{% url 'profile' %}" class="dropdown-item" type="button">Trang cá nhân</a>
+                    
+                    <a href="{% url 'dang_xuat' %}" class="dropdown-item" type="button">Đăng xuất</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Tài khoản</button>
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a href="{% url 'dang_nhap' %}" class="dropdown-item" type="button">Đăng nhập</a>
+                    <a href="{% url 'dang_ky' %}" class="dropdown-item" type="button">Đăng ký</a>
+                </div>
+            </div>
+        {% endif %}
+        </div>
+    </div>
 
                 </div>
                 <div class="d-inline-flex align-items-center d-block d-lg-none">
-                    <a href="" class="btn px-0 ml-2">
-                        <i class="fas fa-heart text-dark"></i>
-                        <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
-                    </a>
-                    <a href="" class="btn px-0 ml-2">
+              
+                    <a href="{% url 'gio_hang_view' %}" class="btn px-0 ml-2">
                         <i class="fas fa-shopping-cart text-dark"></i>
-                        <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">0</span>
+                        <span class="badge text-dark border border-dark rounded-circle" style="padding-bottom: 2px;">{{ cart_total_items }}</span>
                     </a>
                 </div>
             </div>
@@ -37,28 +51,18 @@
                     <span class="h1 text-uppercase text-dark bg-primary px-2 ml-n1">Shop</span>
                 </a>
             </div>
+<!-- Thay thế form tìm kiếm cũ -->
+
             <div class="col-lg-4 col-6 text-left">
-                <form action="" method="GET">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for products" name = "timkiem">
-                        <div class="input-group-append">
-                            <span class="input-group-text bg-transparent text-primary">
-                                <i class="fa fa-search"></i>
-                            </span>
-                        </div>
-                    </div>
-                </form>
-            </div>
+    {% include 'core/search_bar.html' %}
+</div>
+
             <div class="col-lg-4 col-6 text-right">
                 <p class="m-0">Customer Service</p>
                 <h5 class="m-0">+012 345 6789</h5>
             </div>
         </div>
     </div>
-    <!-- Topbar End -->
-
-
-    <!-- Navbar Start -->
     <div class="container-fluid bg-dark mb-30">
         <div class="row px-xl-5">
 <div class="col-lg-3 d-none d-lg-block">
@@ -98,13 +102,15 @@
                             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
                         </div>
                         <div class="navbar-nav ml-auto py-0 d-none d-lg-block">
+                            
                             <a href="" class="btn px-0">
                                 <i class="fas fa-heart text-primary"></i>
                                 <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>
                             </a>
-                            <a href="" class="btn px-0 ml-3">
+                            
+                            <a href="{% url 'gio_hang_view' %}" class="btn px-0 ml-3">
                                 <i class="fas fa-shopping-cart text-primary"></i>
-                                <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">0</span>
+                                <span class="badge text-secondary border border-secondary rounded-circle" style="padding-bottom: 2px;">{{ cart_total_items }}</span>
                             </a>
                         </div>
                     </div>
@@ -112,4 +118,3 @@
             </div>
         </div>
     </div>
-    <!-- Navbar End -->

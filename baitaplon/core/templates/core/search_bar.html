@@ -1,0 +1,83 @@
+{% load static %}
+<form action="{% url 'shop' %}" method="GET" class="search-form">
+    <div class="input-group position-relative">
+        <input type="text"
+               class="form-control search-input"
+               placeholder="Tìm kiếm sản phẩm..."
+               name="timkiem"
+               autocomplete="off"
+               value="{{ query|default:'' }}">
+        <div class="input-group-append">
+            <button type="submit"
+                    class="input-group-text bg-transparent text-primary border-0">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+
+        <!-- Dropdown gợi ý -->
+        <div class="search-suggestions position-absolute w-100 bg-white shadow-lg mt-1"
+             style="display:none; top:100%; z-index:1050; max-height:400px; overflow-y:auto; border-radius:.375rem;">
+            <div class="list-group" id="search-results"></div>
+        </div>
+    </div>
+</form>
+
+<style>
+.search-result-item{padding:10px;border-bottom:1px solid #eee;display:flex;align-items:center}
+.search-result-item img{width:50px;height:50px;object-fit:cover;margin-right:10px;border-radius:4px}
+.search-result-item .info{flex:1}
+.search-result-item .name{font-weight:500;font-size:.95rem;margin:0;color:#333}
+.search-result-item .price{font-size:.9rem;color:#e74c3c;font-weight:bold}
+.no-results{padding:15px;text-align:center;color:#777;font-style:italic}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=> {
+    const input = document.querySelector('.search-input');
+    const box   = document.querySelector('.search-suggestions');
+    const list  = document.getElementById('search-results');
+    let timer;
+
+    input.addEventListener('input',()=> {
+        clearTimeout(timer);
+        const q = input.value.trim();
+        if (q.length < 2) { box.style.display='none'; return; }
+
+        timer = setTimeout(()=> {
+            fetch(`{% url 'search_suggestions' %}?q=${encodeURIComponent(q)}`)
+                .then(r=>r.json())
+                .then(d=> {
+                    list.innerHTML = '';
+                    if (d.results.length) {
+                        d.results.forEach(p=> {
+                            const a = document.createElement('a');
+                            a.href = p.url;
+                            a.className = 'list-group-item list-group-item-action search-result-item';
+                            a.innerHTML = `
+                                <img src="${p.image}" alt="${p.name}">
+                                <div class="info">
+                                    <p class="name mb-1">${p.name}</p>
+                                    <p class="price mb-0">${p.price.toLocaleString('vi-VN')}₫</p>
+                                </div>`;
+                            list.appendChild(a);
+                        });
+                        box.style.display='block';
+                    } else {
+                        list.innerHTML = '<div class="no-results">Không tìm thấy sản phẩm</div>';
+                        box.style.display='block';
+                    }
+                })
+                .catch(()=> {
+                    list.innerHTML = '<div class="no-results">Lỗi kết nối</div>';
+                    box.style.display='block';
+                });
+        },300);
+    });
+
+    // Ẩn khi click ra ngoài
+    document.addEventListener('click', e=> {
+        if (!input.contains(e.target) && !box.contains(e.target))
+            box.style.display='none';
+    });
+});
+</script>

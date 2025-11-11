@@ -7,144 +7,121 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 <link href="{% static 'lib/animate/animate.min.css' %}" rel="stylesheet">
+<link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
 <link href="{% static 'css/style.css' %}" rel="stylesheet">
 
 <style>
-    .login-wrapper {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 20px;
-    }
-    .login-box {
-        max-width: 400px;
-        width: 100%;
-        background: white;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-        animation: slideUp 0.6s ease-out;
-    }
-    .login-header {
-        background: #667eea;
-        color: white;
-        padding: 25px 20px;
-        text-align: center;
-        font-weight: 600;
-        font-size: 1.4rem;
-    }
-    .login-body {
-        padding: 30px 25px;
-    }
-    .form-control {
-        height: 48px;
-        border-radius: 10px;
-        border: 1px solid #e1e5e9;
-        padding: 0 15px;
-        font-size: 15px;
-        margin-bottom: 16px;
-        transition: 0.3s;
-    }
-    .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-    .btn-login {
-        height: 48px;
-        border-radius: 10px;
-        background: #667eea;
-        border: none;
-        font-weight: 600;
-        font-size: 16px;
-        transition: 0.3s;
-    }
-    .btn-login:hover {
-        background: #5a6fd8;
-        transform: translateY(-2px);
-    }
-    .help-text {
-        text-align: center;
-        margin-top: 20px;
-        font-size: 14px;
-    }
-    .help-text a {
-        color: #667eea;
-        text-decoration: none;
-        font-weight: 500;
-    }
-    .help-text a:hover {
-        text-decoration: underline;
-    }
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+.login-card {
+    max-width: 420px;
+    margin: 60px auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+.login-card .form-control {
+    margin-bottom: 12px;
+    height: 44px;
+    border-radius: 6px;
+}
+.login-card .btn {
+    width: 100%;
+    height: 44px;
+    border-radius: 6px;
+}
+.login-card .help-link{
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    color: #007bff;
+    text-decoration: none;
+}
+.login-card .help-link:hover{ text-decoration: underline; }
+@media (max-width: 768px){
+    .login-card{ margin: 24px 12px; }
+}
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 </style>
 {% endblock %}
 
+
 {% block content %}
-<div class="login-wrapper">
-    <div class="login-box">
-        <div class="login-header">
-            <i class="fa fa-store mr-2"></i> Đăng Nhập Khách Hàng
+<div class="container">
+  <div class="col-lg-4 col-10 mx-auto text-left mt-5">
+    <div class="login-card p-4 shadow rounded-3 bg-light">
+      <h4 class="text-center mb-4">Đăng Nhập Khách Hàng</h4>
+
+      <!-- Thông báo hệ thống -->
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} small" role="alert">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      <!-- Lỗi chung của form -->
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger" role="alert">
+          {% for error in form.non_field_errors %}
+            {{ error }}
+          {% endfor %}
         </div>
-        <div class="login-body">
-
-            <!-- Thông báo -->
-            {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert">×</button>
-                </div>
-                {% endfor %}
-            {% endif %}
-
-            <!-- Form đăng nhập -->
-            <form method="POST">
-                {% csrf_token %}
-                <input 
-                    type="text" 
-                    name="username" 
-                    class="form-control" 
-                    placeholder="Tài khoản hoặc Email" 
-                    required 
-                    autocomplete="username"
-                    value="{{ request.POST.username }}"
-                >
-                <input 
-                    type="password" 
-                    name="password" 
-                    class="form-control" 
-                    placeholder="Mật khẩu" 
-                    required 
-                    autocomplete="current-password"
-                >
-                <button type="submit" class="btn btn-primary btn-login btn-block">
-                    <i class="fa fa-sign-in-alt mr-2"></i> Đăng Nhập
-                </button>
-            </form>
-
-            <div class="help-text">
-                Chưa có tài khoản? 
-                <a href="#">Đăng ký ngay</a>
+      {% endif %}
+      
+      <form action="{% url 'dang_nhap' %}" method="POST">
+        {% csrf_token %}
+        
+        <div class="form-group mb-3">
+          <input type="text" 
+                 name="username" 
+                 class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                 placeholder="Tên đăng nhập" required>
+          {% if form.username.errors %}
+            <div class="invalid-feedback d-block small">
+              {% for error in form.username.errors %}{{ error }}{% endfor %}
             </div>
+          {% endif %}
         </div>
+
+        <div class="form-group mb-3">
+          <input type="password" 
+                 name="password" 
+                 class="form-control {% if form.password.errors %}is-invalid{% endif %}" 
+                 placeholder="Mật khẩu" required>
+          {% if form.password.errors %}
+            <div class="invalid-feedback d-block small">
+              {% for error in form.password.errors %}{{ error }}{% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 py-2">
+          <i class="fa fa-sign-in-alt mr-1"></i> Đăng Nhập
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <a class="help-link" href="{% url 'dang_ky' %}">
+          Chưa có tài khoản? Đăng ký ngay
+        </a>
+      </div>
     </div>
+  </div>
 </div>
-{% endblock %}
+{% endblock content %}
+
 
 {% block jsblock %}
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'lib/easing/easing.min.js' %}"></script>
+<script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+<script src="{% static 'mail/jqBootstrapValidation.min.js' %}"></script>
+<script src="{% static 'mail/contact.js' %}"></script>
 <script src="{% static 'js/main.js' %}"></script>
-
-<script>
-    // Ẩn thông báo sau 4 giây
-    setTimeout(() => {
-        $('.alert').fadeOut();
-    }, 4000);
-</script>
 {% endblock %}

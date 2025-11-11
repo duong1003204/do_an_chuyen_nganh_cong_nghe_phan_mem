@@ -70,30 +70,65 @@
         {% csrf_token %}
         <div class="form-group mb-3">
           <input type="text" class="form-control" placeholder="Tên đăng nhập" name="username" required />
+          {% if form.username.errors %}
+            <div class="text-danger">
+              {{ form.username.errors }}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group mb-3">
           <input type="text" class="form-control" placeholder="Họ và tên" name="ho_ten" required />
+          {% if form.ho_ten.errors %}
+            <div class="text-danger">
+              {{ form.ho_ten.errors }}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group mb-3">
           <input type="email" class="form-control" placeholder="Email" name="email" required />
+          {% if form.email.errors %}
+            <div class="text-danger">
+              {{ form.email.errors }}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group mb-3">
           <input type="text" class="form-control" placeholder="Số điện thoại" name="so_dien_thoai" />
+          {% if form.so_dien_thoai.errors %}
+            <div class="text-danger">
+              {{ form.so_dien_thoai.errors }}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group mb-3">
           <input type="text" class="form-control" placeholder="Địa chỉ" name="dia_chi" />
+          {% if form.dia_chi.errors %}
+            <div class="text-danger">
+              {{ form.dia_chi.errors }}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group mb-3">
           <input type="password" class="form-control" placeholder="Mật khẩu" name="password1" required />
+          {% if form.password1.errors %}
+            <div class="text-danger">
+              {{ form.password1.errors }}
+            </div>
+          {% endif %}
         </div>
 
         <div class="form-group mb-3">
           <input type="password" class="form-control" placeholder="Xác nhận mật khẩu" name="password2" required />
+          {% if form.password2.errors %}
+            <div class="text-danger">
+              {{ form.password2.errors }}
+            </div>
+          {% endif %}
         </div>
 
         <button type="submit" class="btn btn-primary w-100 py-2">
@@ -102,7 +137,7 @@
       </form>
 
       <div class="text-center mt-3">
-        <a class="help-link" href="{% url 'login' %}">
+        <a class="help-link" href="{% url 'dang_nhap' %}">
           Đã có tài khoản? Đăng nhập ngay
         </a>
       </div>

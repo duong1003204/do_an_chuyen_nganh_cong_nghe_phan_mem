@@ -1,7 +1,4 @@
 from django.db import models
-
-# Create your models here.
-from django.db import models
 from nguoidung.models import NguoiDung
 from sanpham.models import SanPham
 
@@ -17,8 +14,21 @@ class GioHang(models.Model):
 class ChiTietGioHang(models.Model):
     ma_gio_hang = models.ForeignKey(GioHang, on_delete=models.CASCADE)
     ma_san_pham = models.ForeignKey(SanPham, on_delete=models.CASCADE)
+    
+
+    size = models.CharField(max_length=50, null=True, blank=True)
+    color = models.CharField(max_length=50, null=True, blank=True)
+    
     so_luong = models.IntegerField(default=1)
     ngay_them = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.ma_san_pham.ten_san_pham} - {self.so_luong}"
+        # Hiển thị rõ hơn trong admin
+        return f"{self.ma_san_pham.ten_san_pham} ({self.size}, {self.color}) - {self.so_luong}"
+
+    # Thêm property để tính tổng tiền (giống logic view)
+    # Giúp template cart.html gọi .tong_tien_item dễ dàng
+    @property
+    def tong_tien_item(self):
+        gia = self.ma_san_pham.giakm if self.ma_san_pham.giakm is not None else 0
+        return gia * self.so_luong

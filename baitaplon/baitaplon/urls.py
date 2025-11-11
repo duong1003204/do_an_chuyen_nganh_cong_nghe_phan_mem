@@ -8,6 +8,9 @@ urlpatterns = [
     path('', include('trangchu.urls')),
     path('sanpham/', include('sanpham.urls')),
     path('nguoidung/', include('nguoidung.urls')),
+    path('giohang/', include('giohang.urls')),
+    path('', include('core.urls')),     
+    path('donhang/', include('donhang.urls')),
 ]
 
 if settings.DEBUG:

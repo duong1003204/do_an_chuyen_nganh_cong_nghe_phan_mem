@@ -1,35 +1,21 @@
-# users/forms.py  (hoặc tên app của bạn)
-from django import forms
-from django.contrib.auth import authenticate
-from .models import NguoiDung
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import NguoiDung  # Import model NguoiDung của bạn
 
-class LoginForm(forms.Form):
-    username = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Tài khoản',
-            'autocomplete': 'username'
-        })
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Mật khẩu',
-            'autocomplete': 'current-password'
-        })
-    )
+class NguoiDungCreationForm(UserCreationForm):
+    """
+    Đây là Form tùy chỉnh cho việc ĐĂNG KÝ.
+    """
+    class Meta(UserCreationForm.Meta):
+        model = NguoiDung  # Bảo Django dùng model NguoiDung
+        
+        # Các trường bạn muốn hiển thị trên form đăng ký
+        # (username, password1, password2 đã có sẵn)
+        fields = ('username', 'ho_ten', 'email', 'so_dien_thoai', 'dia_chi')
 
-    def clean(self):
-        cleaned_data = super().clean()
-        username = cleaned_data.get('username')
-        password = cleaned_data.get('password')
-
-        if username and password:
-            user = authenticate(username=username, password=password)
-            if not user:
-                raise forms.ValidationError("Tài khoản hoặc mật khẩu không đúng.")
-            if not user.trang_thai:
-                raise forms.ValidationError("Tài khoản của bạn đã bị khóa.")
-            cleaned_data['user'] = user
-        return cleaned_data
+class NguoiDungChangeForm(UserChangeForm):
+    """
+    Đây là Form tùy chỉnh cho trang ADMIN.
+    """
+    class Meta:
+        model = NguoiDung # Bảo Django dùng model NguoiDung
+        fields = '__all__' # Hoặc liệt kê các trường bạn muốn
