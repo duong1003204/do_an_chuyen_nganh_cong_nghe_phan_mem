@@ -73,7 +73,6 @@ def place_order_view(request):
         payment_method = request.POST.get('payment_method') # Tên trường này phải khớp form
         ghi_chu = request.POST.get('ghi_chu', '') # Thêm trường ghi chú (nếu có)
 
-        # Lấy lại giỏ hàng và tính lại tổng tiền (để bảo mật)
         try:
             gio_hang_db = GioHang.objects.get(ma_nguoi_dung=request.user)
             cart_items = ChiTietGioHang.objects.filter(ma_gio_hang=gio_hang_db)

@@ -13,8 +13,9 @@ def chitietsanpham(request, id):
     sizes = list(ctsp.bienthesanpham_set.values_list('kich_thuoc', flat=True).distinct())
     colors = list(ctsp.bienthesanpham_set.values_list('mau_sac', flat=True).distinct())
     menudanhmuc = DanhMuc.objects.filter(trang_thai=True)
+    sanpham = SanPham.objects.filter(trang_thai=True).exclude(id=id).order_by('?')[:4]
 
-    return render(request, 'detail.html', {'ctsp': ctsp, 'sizes': sizes, 'colors': colors, 'menudanhmuc': menudanhmuc})
+    return render(request, 'detail.html', {'ctsp': ctsp, 'sizes': sizes, 'colors': colors, 'menudanhmuc': menudanhmuc, 'sanpham': sanpham})
 
 def colors_for_size(request):
     size = request.GET.get('size')
