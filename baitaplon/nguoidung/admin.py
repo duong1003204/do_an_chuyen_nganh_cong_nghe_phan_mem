@@ -10,7 +10,6 @@ class NguoiDungAdmin(UserAdmin):
     
     list_display = ['username', 'ho_ten', 'email', 'vai_tro', 'is_staff', 'trang_thai']
     
-    # Thêm các trường tùy chỉnh vào fieldsets
     fieldsets = UserAdmin.fieldsets + (
         (None, {'fields': ('ho_ten', 'so_dien_thoai', 'dia_chi', 'vai_tro', 'trang_thai')}),
     )

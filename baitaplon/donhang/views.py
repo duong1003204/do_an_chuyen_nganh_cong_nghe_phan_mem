@@ -15,10 +15,20 @@ import json
 from datetime import datetime
 import pytz # Thêm import pytz
 
+from django.shortcuts import render
+from django.views import View
+from django.db.models import Sum, Count
+from django.db.models.functions import TruncDay
+from .models import DonHang, ChiTietDonHang
+from datetime import timedelta
+from django.utils import timezone
+from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.decorators import method_decorator
 # Import các models
 from giohang.models import GioHang, ChiTietGioHang
 from .models import DonHang, ChiTietDonHang
-
+from django.http import HttpResponse
+from openpyxl import Workbook
 # --- CẤU HÌNH VNPAY DEMO ---
 # (Lấy từ Sandbox của VNPAY)
 VNPAY_TMNCODE = "BTQM0MAO" # Mã website
@@ -246,3 +256,136 @@ def order_success_view(request, order_id):
         'order': order
     }
     return render(request, 'order_success.html', context)
+
+
+@method_decorator(staff_member_required, name='dispatch')
+
+
+@method_decorator(staff_member_required, name='dispatch')
+class BaoCaoDoanhThuView(View):
+    template_name = 'admin/donhang/baocao_doanhthu.html'
+
+    def get(self, request):
+
+        # ========= XỬ LÝ EXPORT EXCEL =========
+        if request.GET.get("export") == "excel":
+            return self.export_excel(request)
+
+        # ========= MẶC ĐỊNH 30 NGÀY =========
+        ngay_ket_thuc = timezone.now().date()
+        ngay_bat_dau = ngay_ket_thuc - timedelta(days=30)
+
+        group_by = request.GET.get('group_by', 'day')
+
+        start_date_param = request.GET.get('start_date')
+        end_date_param = request.GET.get('end_date')
+        selected_month_year = request.GET.get('month_year')
+
+        # ======= Xử lý lọc thời gian =======
+        if group_by == 'month' and selected_month_year:
+            dt = datetime.strptime(selected_month_year, "%Y-%m").date()
+            ngay_bat_dau = dt.replace(day=1)
+
+            next_month = ngay_bat_dau.replace(day=28) + timedelta(days=4)
+            ngay_ket_thuc = (next_month - timedelta(days=next_month.day)).date()
+
+        elif start_date_param and end_date_param:
+            ngay_bat_dau = datetime.strptime(start_date_param, "%Y-%m-%d").date()
+            ngay_ket_thuc = datetime.strptime(end_date_param, "%Y-%m-%d").date()
+
+        # ======= Lọc đơn hàng theo thời gian =======
+        don_hang_da_giao = DonHang.objects.filter(
+            trang_thai_don_hang='da_giao',
+            ngay_dat__date__gte=ngay_bat_dau,
+            ngay_dat__date__lte=ngay_ket_thuc
+        ).order_by('-ngay_dat')
+
+        # ======= Doanh thu theo thời gian =======
+        if group_by == 'month':
+            truncate_by = TruncMonth('ngay_dat')
+            date_format = '%Y-%m'
+        elif group_by == 'year':
+            truncate_by = TruncYear('ngay_dat')
+            date_format = '%Y'
+        else:
+            truncate_by = TruncDay('ngay_dat')
+            date_format = '%Y-%m-%d'
+
+        doanh_thu_theo_thoi_gian = don_hang_da_giao.annotate(
+            group_date=truncate_by
+        ).values('group_date').annotate(
+            tong_doanh_thu=Sum('tong_tien')
+        ).order_by('group_date')
+
+        # ======= Tổng quan theo bộ lọc =======
+        tong_quan = don_hang_da_giao.aggregate(
+            tong_doanh_thu=Sum('tong_tien'),
+            tong_don_hang=Count('id')
+        )
+
+        # ======= ⭐ TOP SẢN PHẨM MỌI THỜI GIAN =======
+        top_query = ChiTietDonHang.objects.all().values(
+            'ma_san_pham__ten_san_pham'
+        ).annotate(
+            tong_so_luong_ban=Sum('so_luong'),
+            tong_doanh_thu_san_pham=Sum('thanh_tien')
+        )
+
+        top_san_pham = top_query.order_by('-tong_so_luong_ban')[:10]
+        bottom_san_pham = top_query.order_by('tong_so_luong_ban')[:10]
+
+        # ======= Tổng doanh thu toàn hệ thống =======
+        tong_doanh_thu_all = DonHang.objects.filter(
+            trang_thai_don_hang='da_giao'
+        ).aggregate(
+            total=Sum('tong_tien')
+        )['total'] or 0
+
+        context = {
+            'title': 'Báo cáo Doanh thu & Sản phẩm',
+
+            # dữ liệu lọc
+            'don_hang_list': don_hang_da_giao,
+            'doanh_thu_theo_thoi_gian': doanh_thu_theo_thoi_gian,
+            'tong_quan': tong_quan,
+
+            # dữ liệu mọi thời gian
+            'top_san_pham': top_san_pham,
+            'bottom_san_pham': bottom_san_pham,
+            'tong_doanh_thu_all': tong_doanh_thu_all,
+
+            # filter binding
+            'ngay_bat_dau': ngay_bat_dau,
+            'ngay_ket_thuc': ngay_ket_thuc,
+            'selected_month_year': selected_month_year,
+            'group_by': group_by,
+            'date_format': date_format,
+        }
+
+        return render(request, self.template_name, context)
+
+    # =============== EXPORT EXCEL ===============
+    def export_excel(self, request):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "BaoCaoDoanhThu"
+
+        ws.append(["Mã đơn", "Khách hàng", "Ngày đặt", "Tổng tiền"])
+
+        orders = DonHang.objects.filter(trang_thai_don_hang='da_giao')
+
+        for o in orders:
+            ws.append([
+                o.id,
+                o.ma_nguoi_dung.username if o.ma_nguoi_dung else "",
+                o.ngay_dat.strftime("%d/%m/%Y %H:%M"),
+                o.tong_tien,
+            ])
+
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response['Content-Disposition'] = 'attachment; filename="baocao_doanhthu.xlsx"'
+
+        wb.save(response)
+        return response

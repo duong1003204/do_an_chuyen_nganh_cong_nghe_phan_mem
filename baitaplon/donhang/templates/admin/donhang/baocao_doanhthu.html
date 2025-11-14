@@ -1,0 +1,150 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block content_title %}
+<h1 class="page-header">{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+
+<form method="GET" class="form-inline" id="report-filter-form">
+
+    <div class="form-group mr-3">
+        <label for="id_group_by" class="mr-2">Lọc :</label>
+        <select name="group_by" id="id_group_by" class="form-control">
+            <option value="day"   {% if group_by == 'day' %}selected{% endif %}>Khoảng Ngày</option>
+
+        </select>
+    </div>
+
+    <!-- Lọc theo ngày -->
+    <div id="filter-day-range" class="filter-group form-group mx-sm-3 mb-2">
+        <label class="mr-2">Từ ngày:</label>
+        <input type="date" name="start_date" id="id_start_date" class="form-control mr-2"
+               value="{{ ngay_bat_dau|date:'Y-m-d' }}">
+        <label class="mr-2">Đến ngày:</label>
+        <input type="date" name="end_date" id="id_end_date" class="form-control"
+               value="{{ ngay_ket_thuc|date:'Y-m-d' }}">
+    </div>
+
+    <!-- Lọc theo tháng -->
+    <div id="filter-month" class="filter-group form-group mx-sm-3 mb-2" style="display:none;">
+        <label class="mr-2">Chọn Tháng:</label>
+        <input type="month" name="month_year" id="id_month_year"
+               class="form-control"
+               value="{{ selected_month_year }}">
+    </div>
+
+    <!-- Lọc theo năm -->
+    <div id="filter-year" class="filter-group form-group mx-sm-3 mb-2" style="display:none;">
+        <label class="mr-2">Chọn Năm:</label>
+        <input type="number" name="year_only" id="id_year_only"
+               class="form-control"
+               min="2000" max="2100"
+               value="{{ selected_year }}">
+    </div>
+
+    <button type="submit" class="btn btn-primary mb-2">
+        <i class="fa fa-refresh"></i> Xem Báo cáo
+    </button>
+</form>
+
+<a href="?export=excel" class="btn btn-success mb-2">
+    <i class="fa fa-file-excel-o"></i> Xuất Excel
+</a>
+
+
+<h3>Danh sách hóa đơn đã giao</h3>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Mã ĐH</th>
+            <th>Khách hàng</th>
+            <th>Ngày đặt</th>
+            <th>Tổng tiền</th>
+            <th>PT Thanh toán</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for dh in don_hang_list %}
+        <tr>
+            <td>{{ dh.id }}</td>
+            <td>{{ dh.ma_nguoi_dung.username }}</td>
+            <td>{{ dh.ngay_dat|date:"d/m/Y H:i" }}</td>
+            <td>{{ dh.tong_tien|floatformat:0 }} đ</td>
+            <td>{{ dh.phuong_thuc_thanh_toan }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">Không có hóa đơn nào trong thời gian này.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+
+{% if top_san_pham %}
+<h3>TOP SẢN PHẨM BÁN CHẠY</h3>
+<table class="table table-striped table-bordered">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Sản phẩm</th>
+        <th>Số lượng bán</th>
+        <th>Doanh thu</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for sp in top_san_pham %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ sp.ma_san_pham__ten_san_pham }}</td>
+            <td>{{ sp.tong_so_luong_ban }}</td>
+            <td>{{ sp.tong_doanh_thu_san_pham|floatformat:0 }} VNĐ</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Không có dữ liệu sản phẩm bán chạy.</p>
+{% endif %}
+
+
+
+
+{% endblock %}
+
+
+{% block extrabody %}
+{{ block.super }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const groupBy = document.getElementById("id_group_by");
+    const dayRange = document.getElementById("filter-day-range");
+    const monthSelect = document.getElementById("filter-month");
+    const yearSelect = document.getElementById("filter-year");
+
+    function updateFilterUI() {
+        const value = groupBy.value;
+
+        dayRange.style.display = "none";
+        monthSelect.style.display = "none";
+        yearSelect.style.display = "none";
+
+        if (value === "day") {
+            dayRange.style.display = "block";
+        } else if (value === "month") {
+            monthSelect.style.display = "block";
+        } else if (value === "year") {
+            yearSelect.style.display = "block";
+        }
+    }
+
+    groupBy.addEventListener("change", updateFilterUI);
+    updateFilterUI();
+});
+</script>
+
+{% endblock %}

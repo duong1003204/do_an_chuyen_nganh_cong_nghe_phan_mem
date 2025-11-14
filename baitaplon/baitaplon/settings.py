@@ -104,15 +104,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'nguoidung.NguoiDung'
 
 
-# ==============================
 # GIAO DIỆN ADMIN JAZZMIN
-# ==============================
+
 JAZZMIN_SETTINGS = {
     "site_title": "Trang Quản Lý Bán Hàng",
     "site_header": "Hệ Thống Quản Lý Cửa Hàng",
-    "site_brand": "Baitaplon Admin",
+    "site_brand": "Admin",
     "welcome_sign": "Chào mừng bạn đến với trang quản lý!",
-    "copyright": "© 2025 Nhóm Phát Triển Baitaplon",
+    "copyright": "© 2025 Nhóm Phát Triển Nhóm 2",
     "show_sidebar": True,
     "navigation_expanded": True,
     "hide_apps": [],

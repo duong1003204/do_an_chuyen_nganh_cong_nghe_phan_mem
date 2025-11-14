@@ -187,3 +187,4 @@ def quan_ly_gio_hang(request):
         request.session['giohang'] = gio_hang_session
 
     return redirect('gio_hang_view')
+
