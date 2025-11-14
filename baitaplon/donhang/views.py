@@ -301,15 +301,9 @@ class BaoCaoDoanhThuView(View):
         ).order_by('-ngay_dat')
 
         # ======= Doanh thu theo thời gian =======
-        if group_by == 'month':
-            truncate_by = TruncMonth('ngay_dat')
-            date_format = '%Y-%m'
-        elif group_by == 'year':
-            truncate_by = TruncYear('ngay_dat')
-            date_format = '%Y'
-        else:
-            truncate_by = TruncDay('ngay_dat')
-            date_format = '%Y-%m-%d'
+
+        truncate_by = TruncDay('ngay_dat')
+        date_format = '%Y-%m-%d'
 
         doanh_thu_theo_thoi_gian = don_hang_da_giao.annotate(
             group_date=truncate_by
